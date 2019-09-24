@@ -1,11 +1,13 @@
 import random
-import urllib.parse
 
 from locust import HttpLocust, TaskSet, seq_task
 from pyquery import PyQuery
 
 
 class DonorBehaviour(TaskSet):
+    # Default host to use, override with --host on the command line
+    host = 'http://localhost:8000'
+
     def __init__(self, parent):
         super().__init__(parent)
         self.donation_payload = {
@@ -19,11 +21,15 @@ class DonorBehaviour(TaskSet):
             'amount': 50,
             'landing_url': 'https://donate-wagtail-staging.herokuapp.com/en-CA/',
             'project': 'mozillafoundation',
-            'campaign_id': ''
+            'campaign_id': '',
+            # https://developers.braintreepayments.com/reference/general/testing/python#nonces-representing-cards
+            'braintree_nonce': 'fake-valid-nonce'
         }
-
-    # Default host to use, override with --host on the command line
-    host = 'http://localhost:8000'
+        self.donation_params = {
+            'currency': 'cad',
+            'source_page_id': 3,
+            'amount': 50
+        }
 
     @seq_task(1)
     def load_donate_form(self):
@@ -31,16 +37,16 @@ class DonorBehaviour(TaskSet):
 
     @seq_task(2)
     def load_payment_information_form(self):
-        resp = self.client.get(f'/en-CA/card/single/?source_page_id={self.d_source_page_id}&currency={self.d_currency}'
-                               f'&amount={self.d_amount}')
+        resp = self.client.get(f'/en-CA/card/single/', params=self.donation_params)
         pq = PyQuery(resp.content)
         self.donation_payload['csrfmiddlewaretoken'] = pq('input[name=csrfmiddlewaretoken]').val()
-        self.donation_payload['braintree_nonce'] = pq('input#id_braintree_nonce').val()
 
     @seq_task(3)
     def make_payment(self):
+        print('submitting payment')
         headers = {'content-type': 'application/x-www-form-encoded'}
-        resp = self.client.post('/en-US/card/single', data=self.donation_payload, headers=headers)
+        resp = self.client.post('/en-US/card/single/', params=self.donation_params,
+                                data=self.donation_payload, headers=headers)
 
 
 class DonorUser(HttpLocust):
