@@ -1,10 +1,10 @@
 import random
 
-from locust import HttpLocust, TaskSet, seq_task
+from locust import HttpLocust, TaskSequence, seq_task
 from pyquery import PyQuery
 
 
-class DonorBehaviour(TaskSet):
+class DonorBehaviour(TaskSequence):
     # Default host to use, override with --host on the command line
     host = 'http://localhost:8000'
 
@@ -19,14 +19,14 @@ class DonorBehaviour(TaskSet):
             'town': 'Toronto',
             'country': 'CA',
             'amount': 50,
-            'landing_url': 'https://donate-wagtail-staging.herokuapp.com/en-CA/',
+            'landing_url': 'https://donate-wagtail-staging.herokuapp.com/en-US/',
             'project': 'mozillafoundation',
-            'campaign_id': '',
+            'campaign_id': 'testing-a-donation',
             # https://developers.braintreepayments.com/reference/general/testing/python#nonces-representing-cards
             'braintree_nonce': 'fake-valid-nonce'
         }
         self.donation_params = {
-            'currency': 'cad',
+            'currency': 'usd',
             'source_page_id': 3,
             'amount': 50
         }
@@ -37,19 +37,16 @@ class DonorBehaviour(TaskSet):
 
     @seq_task(2)
     def load_payment_information_form(self):
-        resp = self.client.get(f'/en-CA/card/single/', params=self.donation_params)
+        resp = self.client.get(f'/en-US/card/single/', params=self.donation_params)
         pq = PyQuery(resp.content)
         self.donation_payload['csrfmiddlewaretoken'] = pq('input[name=csrfmiddlewaretoken]').val()
 
     @seq_task(3)
     def make_payment(self):
-        print('submitting payment')
-        headers = {'content-type': 'application/x-www-form-encoded'}
-        resp = self.client.post('/en-US/card/single/', params=self.donation_params,
-                                data=self.donation_payload, headers=headers)
+        resp = self.client.post('/en-US/card/single/', params=self.donation_params, data=self.donation_payload)
 
 
 class DonorUser(HttpLocust):
     task_set = DonorBehaviour
     # exponentially distributed wait time between actions, avg 15 seconds
-    wait_function = lambda self: random.expovariate(1) * 15000
+    wait_function = lambda self: random.expovariate(1) * 2000
