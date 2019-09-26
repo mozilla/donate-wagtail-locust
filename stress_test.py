@@ -21,7 +21,7 @@ class DonorBehaviour(TaskSequence):
             'amount': 50,
             'landing_url': 'https://donate-wagtail-staging.herokuapp.com/en-US/',
             'project': 'mozillafoundation',
-            'campaign_id': 'testing-a-donation',
+            'campaign_id': 'test-campaign',
             # https://developers.braintreepayments.com/reference/general/testing/python#nonces-representing-cards
             'braintree_nonce': 'fake-valid-nonce'
         }

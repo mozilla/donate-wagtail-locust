@@ -1,0 +1,25 @@
+FROM python:3.7-slim-stretch
+
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+
+WORKDIR /app/
+
+RUN apt-get update && apt-get upgrade -y
+
+RUN pip install virtualenv
+
+RUN virtualenv venv
+
+COPY requirements.txt .
+
+RUN . /app/venv/bin/activate && pip install -r requirements.txt
+
+COPY stress_test.py .
+COPY docker_start.sh .
+
+RUN useradd -ms /bin/bash locust
+
+USER locust
+
+CMD . /app/venv/bin/activate && ./docker_start.sh
