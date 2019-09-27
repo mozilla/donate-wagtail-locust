@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: locust-leader
-        image: cade/donate-locust@sha256:24ea47dbea89ad963cb547845e6c33e9a590f11377cdcab8e431ce3d5d0bd4f2
+        image: cade/donate-locust@sha256:d5c2e29a12b93e1acd818f7fa049c4930824750d14813945aa3abd23d3c426eb
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8089

@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: locust-follower
-        image: cade/donate-locust@sha256:bd33eaea3faafa58b682b38b4277287a12ec0b2d7bce1c34afdc4aade5164136
+        image: cade/donate-locust@sha256:37a520370507907d74678a40ec594de6cad7afca35359478d498dfb1ae3c7fa5
         imagePullPolicy: IfNotPresent
         env:
           - name: TARGET_URL

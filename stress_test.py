@@ -19,21 +19,22 @@ class DonorBehaviour(TaskSequence):
             'town': 'Toronto',
             'country': 'CA',
             'amount': 50,
-            'landing_url': 'https://donate-wagtail-staging.herokuapp.com/en-US/',
+            'landing_url': '',
             'project': 'mozillafoundation',
-            'campaign_id': 'test-campaign',
+            'campaign_id': '',
             # https://developers.braintreepayments.com/reference/general/testing/python#nonces-representing-cards
             'braintree_nonce': 'fake-valid-nonce'
         }
         self.donation_params = {
             'currency': 'usd',
+            # This source_page_id is the main donate landing page on staging
             'source_page_id': 3,
             'amount': 50
         }
 
     @seq_task(1)
     def load_donate_form(self):
-        resp = self.client.get('/en-CA/')
+        resp = self.client.get('/en-US/')
 
     @seq_task(2)
     def load_payment_information_form(self):
@@ -49,4 +50,4 @@ class DonorBehaviour(TaskSequence):
 class DonorUser(HttpLocust):
     task_set = DonorBehaviour
     # exponentially distributed wait time between actions, avg 15 seconds
-    wait_function = lambda self: random.expovariate(1) * 2000
+    wait_function = lambda self: random.expovariate(1) * 10000

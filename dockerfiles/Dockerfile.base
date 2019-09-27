@@ -16,8 +16,6 @@ COPY ./requirements.txt .
 RUN . /app/venv/bin/activate && pip install -r requirements.txt
 
 COPY ./stress_test.py .
-COPY ./scripts/start_follower.sh ./scripts/
-
 
 RUN useradd -ms /bin/bash locust
 
