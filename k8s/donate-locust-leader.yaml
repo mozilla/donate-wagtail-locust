@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: locust-deployment-leader
+  labels:
+    app: locust-leader
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: locust-leader
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: locust-leader
+    spec:
+      containers:
+      - name: locust-leader
+        image: cade/donate-locust@sha256:24ea47dbea89ad963cb547845e6c33e9a590f11377cdcab8e431ce3d5d0bd4f2
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8089
+        - containerPort: 5557
+        - containerPort: 5558
+        env:
+          - name: TARGET_URL
+            valueFrom:
+              configMapKeyRef:
+                name: donate-locust-config
+                key: targeturl
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always

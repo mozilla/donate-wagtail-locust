@@ -1,0 +1,6 @@
+FROM cade/donate-locust:base-latest
+
+
+COPY ./scripts/start_follower.sh .
+
+CMD . /app/venv/bin/activate && ./start_follower.sh

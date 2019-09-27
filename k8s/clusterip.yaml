@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: donate-locust
+spec:
+  type: ClusterIP
+  selector:
+    app: locust-leader
+  ports:
+    - port: 5557
+      name: comm
+    - port: 5558
+      name: comm-plus-1
+    - port: 8089
+      name: web-ui
