@@ -1,7 +1,7 @@
 donate-wagtail-locust
 ---------------------
 
-This project aims to help us in capacity planning for the new wagtail based donate platform we're launching in late 2019.
+This project aims to help us in capacity planning for the new wagtail based donation platform we're launching in late 2019.
 
 ### Running with Docker locally
 
